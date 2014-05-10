@@ -49,9 +49,15 @@
 				{{> patients_list}}
 			</div>
 		</div>
+
+		<div class="row">
+			<div class="col-md-6"></div>
+			<div class="col-md-6">
+				{{> add_report_form}}
+			</div>
+		</div>
 	</div>
 
-	{{> add_report_form}}
 	{{> add_patient_form}}
 </body>
 
@@ -177,66 +183,72 @@
 
 <template name="add_report_form">
 	{{#if patient}}
-	<div class="modal fade in" style="display:block;">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button 
-						type="button" class="close close-modal" 
-						data-dismiss="modal" 
-						aria-hidden="true">&times;</button>
-					<h4 class="modal-title">Patient's data</h4>
-				</div>
-				<div class="modal-body">
-					{{#if reports}}
-		            <ul class="list-group">
-						{{#each reports}}
-		                <li class="list-group-item">
-		                    <div class="checkbox">
-		                        <label for="checkbox">
-		                            {{ content }}
-		                        </label>
-		                    </div>
-		                    <div class="pull-right action-buttons">
-		                        <a 
-		                        	href="#" 
-		                        	class="trash remove-report"
-		                        	data-id="{{ _id }}">
-		                        	<span class="glyphicon glyphicon-trash"></span>
-		                        </a>
-		                    </div>
-		                </li>
-						{{/each}}
-		            </ul>
-		            {{/if}}
-					
-		            <div class="form-group">
+	<div class="panel panel-primary">
+        <div class="panel-heading">
+        	<span class="pull-left">
+	            <span class="glyphicon glyphicon-list"></span>
+	            Statements for patient: {{ patient.name }}
+			</span>
+            <span class="pull-right">
+                Total Count 
+                <span class="label label-info">{{ reports.length }}</span>
+            </span>
+            <div class="clearfix"></div>
+        </div>
+        <div class="panel-body">
+            <ul class="list-group">
+        		{{#if reports}}
+				{{#each reports}}
+                <li class="list-group-item">
+                    <div class="checkbox">
+                        <label for="checkbox">
+                            {{ content }}
+                        </label>
+                    </div>
+                    <div class="pull-right action-buttons">
+                        <a 
+                        	href="#" 
+                        	class="trash remove-report"
+                        	data-id="{{ _id }}">
+                        	<span class="glyphicon glyphicon-trash"></span>
+                        </a>
+                    </div>
+                </li>
+				{{/each}}
+				{{else}}
+					<li class="list-group-item">
+						<h4>No reports found.</h4>
+					</li>
+           		{{/if}}
+            </ul>
+        </div>
+        <div class="panel-footer">
+            <div class="row">
+            	<div class="col-md-8">
+            		<div class="form-group">
 		            	<input 
 		            		type="text" 
 		            		name="report" 
 		            		id="report"
+		            		class="form-control"
 		            		placeholder="write the report">
-		            	
-		            	<a href="#">
-		            		<span class="glyphicon glyphicon-ok" id="add_patient_report"></span>
-		            	</a>
 		            </div>
-					
-					{{#each errors}}
-				    	<div class="alert alert-danger">
-				    		{{ message }}
-				    	</div>
-				    {{/each}}
-				</div>
-				<div class="modal-footer">
-					{{#if reports}}
-						Total 
-						<span class="label label-info">{{ reports.length }}</span> reports.
-					{{/if}}
-				</div>
-			</div><!-- /.modal-content -->
-		</div><!-- /.modal-dialog -->
-	</div><!-- /.modal -->
+            	</div>
+                <div class="col-md-4">
+	            	<button type="button" class="btn btn-success" id="add_patient_report">
+	            		Add Report
+	            	</button>
+                </div>
+            </div>
+            <div class="row">
+            	{{#each errors}}
+			    	<div class="alert alert-danger">
+			    		{{ message }}
+			    	</div>
+			    {{/each}}
+            </div>
+        </div>
+    </div>
 	{{/if}}
 </template>
 
