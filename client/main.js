@@ -49,10 +49,6 @@ Template.add_report_form.errors = function () {
 };
 
 Template.add_report_form.events({
-	'click .close-modal': function (e) {
-		e.preventDefault();
-		Session.set('add_report_form_patient', false);
-	},
 	'click #add_patient_report': function (e) {
 		e.preventDefault();
 		var $reportField = $('#report[type="text"]');
@@ -92,6 +88,9 @@ Template.patients_list.events({
 			patient = Patients.getOne(patientId);
 
 		Session.set('add_report_form_patient', patient);
+		Meteor.setTimeout(function () {
+			Reports.createFieldTypeahead();
+		}, 500);
 	},
 	'click .remove-patient': function (e) {
 		e.preventDefault();
@@ -122,6 +121,29 @@ var Utilities = {
 
 		if(typeof fieldData !== 'undefined') return fieldData.value;
 		return false;
+	},
+	strMatcher: function(strs) {
+		return function findMatches(q, cb) {
+			var matches, substringRegex;
+			 
+			// an array that will be populated with substring matches
+			matches = [];
+			 
+			// regex used to determine if a string contains the substring `q`
+			substrRegex = new RegExp(q, 'i');
+			 
+			// iterate through the pool of strings and for any string that
+			// contains the substring `q`, add it to the `matches` array
+			$.each(strs, function(i, str) {
+				if (substrRegex.test(str)) {
+					// the typeahead jQuery plugin expects suggestions to a
+					// JavaScript object, refer to typeahead docs for more info
+					matches.push({ value: str });
+				}
+			});
+			 
+			cb(matches);
+		};
 	}
 }
 
@@ -275,6 +297,30 @@ var Reports = {
 		}
 	},
 
+	createFieldSuggestions: function () {
+		return [
+			'test 1',
+			'test 2', 
+			'test 3'
+		];	
+	},
+
+	createFieldTypeahead: function () {
+		var source = this.createFieldSuggestions(),
+			$field = $('#report[type="text"]');
+
+		if($field.closest('.twitter-typeahead').length <= 0){
+			$field.typeahead({
+				minLength: 1,
+		        highlight: true,
+		        hint: false
+			}, {
+				name: 'reports',
+				source: Utilities.strMatcher(source)
+			});
+		}
+	},
+
 	validate: function (report, patient) {
 		var results = [];
 
@@ -297,5 +343,5 @@ var Reports = {
 
 	remove: function (id) {
 		this.collection.remove({_id: id});	
-	},
+	}
 };
