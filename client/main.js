@@ -1,4 +1,4 @@
-Meteor.subscribe('patients');
+var PatientsSubscription = Meteor.subscribe('patients');
 Meteor.subscribe('reports');
 
 var PatientsCollection = new Meteor.Collection('patients');
@@ -105,11 +105,11 @@ Template.patients_list.events({
 });
 
 //gender graph
-Template.gender_chart.rendered = function () {
-	Meteor.setTimeout(function(){
+Meteor.autorun(function () {
+	if(PatientsSubscription.ready()){
 		Patients.drawChart();
-	}, 1000);	
-};
+	}
+});
 
 Template.gender_chart.maleCount = function () {
 	return Patients.countByGender('male');
