@@ -42,22 +42,17 @@
 	<div class="clearfix"></div>
 	<div class="container">
 		<div class="row">
-			<div class="col-md-5">
+			<div class="col-md-3">
 				{{> gender_chart}}
 			</div>
-			<div class="col-md-6 col-md-offset-1">
+			<div class="col-md-5">
 				{{> patients_list}}
 			</div>
-		</div>
-
-		<div class="row">
-			<div class="col-md-6"></div>
-			<div class="col-md-6">
+			<div class="col-md-4">
 				{{> add_report_form}}
 			</div>
 		</div>
 	</div>
-
 	{{> add_patient_form}}
 </body>
 
@@ -187,7 +182,7 @@
         <div class="panel-heading">
         	<span class="pull-left">
 	            <span class="glyphicon glyphicon-list"></span>
-	            Statements for patient: {{ patient.name }}
+	            Patient: {{ patient.name }}
 			</span>
             <span class="pull-right">
                 Total Count 

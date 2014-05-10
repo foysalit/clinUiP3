@@ -108,7 +108,15 @@ Template.patients_list.events({
 Template.gender_chart.rendered = function () {
 	Meteor.setTimeout(function(){
 		Patients.drawChart();
-	}, 500);	
+	}, 1000);	
+};
+
+Template.gender_chart.maleCount = function () {
+	return Patients.countByGender('male');
+};
+
+Template.gender_chart.femaleCount = function () {
+	return Patients.countByGender('female');
 };
 
 var Utilities = {
@@ -234,10 +242,12 @@ var Patients = {
 
 	remove: function (id) {
 		this.collection.remove({_id: id});	
+		this.drawChart();
 	},
 
 	drawChart: function () {
 		var self = this,
+			$el = $('#gender_chart'),
 			male = this.countByGender('male'),
 			female = this.countByGender('female');
 
