@@ -38,8 +38,9 @@ Template.add_report_form.patient = function () {
 };
 
 Template.add_report_form.reports = function () {
-	var patient = Session.get('add_report_form_patient');
-		reports = Reports.getByPatient(patient._id);
+	var patient = Session.get('add_report_form_patient'),
+		filter = Session.get('reports_filter'),
+		reports = Reports.getByPatient(patient._id, filter);
 
 	return reports;
 };
@@ -68,6 +69,11 @@ Template.add_report_form.events({
 		
 		var report = $(e.target).closest('.remove-report').data('id');
 		Reports.remove(report);
+	},
+	'keyup #reports_filter': function (e) {
+		var filter = $(e.currentTarget).val();
+
+		Session.set('reports_filter', filter);
 	}
 });
 
@@ -92,7 +98,7 @@ Template.patients_list.events({
 	'click .list-group-item': function (e) {
 		var patientId = $(e.currentTarget).data('id'),
 			patient = Patients.getOne(patientId);
-			
+
 		Reports.showTable(patient);
 	},
 	'click .remove-patient': function (e) {
@@ -280,8 +286,13 @@ var Patients = {
 var Reports = {
 	collection: ReportsCollection,
 
-	getByPatient: function (patientId) {
-		return this.collection.find({patient: patientId}).fetch();
+	getByPatient: function (patientId, filter) {
+		var query = {patient: patientId};
+
+		if(filter && filter.length > 0)
+			query.content = {$regex: filter, $options: "i"};
+
+		return this.collection.find(query).fetch();
 	},
 
 	add: function (report, patient) {
@@ -337,6 +348,8 @@ var Reports = {
 	showTable: function (patient) {
 		var self = this;
 		Session.set('add_report_form_patient', patient);
+		Session.set('reports_filter', null);
+
 		Meteor.setTimeout(function () {
 			self.createFieldTypeahead();
 		}, 500);
