@@ -1,0 +1,245 @@
+<head>
+	<title>clinUiP3</title>
+</head>
+
+<body>
+	<div class="navbar navbar-inverse" role="navigation">
+		<div class="container">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="#">ClinUiPv3</a>
+			</div>
+
+			<div class="navbar-collapse collapse">
+				<ul class="nav navbar-nav">
+					<li><a href="#about">About</a></li>
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">GoTo<b class="caret"></b></a>
+						<ul class="dropdown-menu">
+							<li><a href="#">Patient Data</a></li>
+						</ul>
+					</li>
+				</ul>
+				<form class="navbar-form navbar-right" role="form">
+					<div class="form-group">
+						<input type="text" placeholder="Email" class="form-control">
+					</div>
+					<div class="form-group">
+						<input type="password" placeholder="Password" class="form-control">
+					</div>
+					<button type="submit" class="btn btn-success">Sign in</button>
+				</form>
+
+			</div><!--/.navbar-collapse -->
+		</div>
+	</div>
+	
+	<div class="clearfix"></div>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-5">
+				{{> gender_chart}}
+			</div>
+			<div class="col-md-6 col-md-offset-1">
+				{{> patients_list}}
+			</div>
+		</div>
+	</div>
+
+	{{> add_report_form}}
+	{{> add_patient_form}}
+</body>
+
+<template name="add_patient_form">
+	{{#if show}}
+	<div class="modal fade in" style="display:block;">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button 
+						type="button" class="close close-modal" 
+						data-dismiss="modal" 
+						aria-hidden="true">&times;</button>
+					<h4 class="modal-title">Add new patient</h4>
+				</div>
+				<div class="modal-body">
+					<form role="form" id="add_patient_form">
+				        <div class="required-field-block">
+				            <input type="text" name="name" placeholder="Patient Name" class="form-control">
+				            <div class="required-icon">
+				                <div class="text">*</div>
+				            </div>
+				        </div>
+				        
+				        <div class="required-field-block">
+				            <input type="text" name="id" placeholder="Patient Id" class="form-control">
+				            <div class="required-icon">
+				                <div class="text">*</div>
+				            </div>
+				        </div>
+				        
+				        <div class="form-group">
+				        	<label for="genger">Patient's gender: </label>
+								<div class="checkbox-inline">
+						            <label>
+						                <input type="radio" value="male" name="gender">
+						                Male
+						            </label>
+						            <label>
+						                <input type="radio" value="female" name="gender">
+						                Female
+						            </label>
+						        </div>
+				        </div>
+				    </form>
+					
+					{{#each errors}}
+				    	<div class="alert alert-danger">
+				    		{{ message }}
+				    	</div>
+				    {{/each}}
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-primary" id="add_patient">
+						Add Patient
+					</button>
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+	{{/if}}
+</template>
+
+<template name="patients_list">
+	<div class="panel panel-primary">
+        <div class="panel-heading">
+            <span class="glyphicon glyphicon-list"></span>Patients Lists
+            <div class="pull-right action-buttons">
+                <div class="btn-group pull-right">
+                    <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                        <span class="glyphicon glyphicon-cog" style="margin-right: 0px;"></span>
+                    </button>
+                    <ul class="dropdown-menu slidedown">
+                        <li><a href="#" id="show_add_patient_form">
+                        	<span class="glyphicon glyphicon-pencil"></span>
+                        	Add Patient
+                        </a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <ul class="list-group">
+			{{#each patients}}
+                <li class="list-group-item">
+                    <div class="checkbox">
+                        <label for="checkbox">
+                        	#{{ id }}.
+                            {{ name }}
+                            <span class="label label-info">{{ gender }}</span>
+                        </label>
+                    </div>
+                    <div class="pull-right action-buttons">
+                        <a 
+                        	href="#" 
+                        	class="trash remove-patient" 
+                        	data-id="{{ _id }}">
+                        	<span class="glyphicon glyphicon-trash"></span>
+                        </a>
+                        <a 
+                        	href="#" 
+                        	class="flag add-patient-report" 
+                        	data-id="{{ _id }}">
+                        	<span class="glyphicon glyphicon-flag"></span>
+                        </a>
+                    </div>
+                </li>
+			{{/each}}
+            </ul>
+        </div>
+        <div class="panel-footer">
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>
+                        Total Count 
+                        <span class="label label-info">{{ patients.length }}</span>
+                    </h6>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template name="add_report_form">
+	{{#if patient}}
+	<div class="modal fade in" style="display:block;">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button 
+						type="button" class="close close-modal" 
+						data-dismiss="modal" 
+						aria-hidden="true">&times;</button>
+					<h4 class="modal-title">Patient's data</h4>
+				</div>
+				<div class="modal-body">
+					{{#if reports}}
+		            <ul class="list-group">
+						{{#each reports}}
+		                <li class="list-group-item">
+		                    <div class="checkbox">
+		                        <label for="checkbox">
+		                            {{ content }}
+		                        </label>
+		                    </div>
+		                    <div class="pull-right action-buttons">
+		                        <a 
+		                        	href="#" 
+		                        	class="trash remove-report"
+		                        	data-id="{{ _id }}">
+		                        	<span class="glyphicon glyphicon-trash"></span>
+		                        </a>
+		                    </div>
+		                </li>
+						{{/each}}
+		            </ul>
+		            {{/if}}
+					
+		            <div class="form-group">
+		            	<input 
+		            		type="text" 
+		            		name="report" 
+		            		id="report"
+		            		placeholder="write the report">
+		            	
+		            	<a href="#">
+		            		<span class="glyphicon glyphicon-ok" id="add_patient_report"></span>
+		            	</a>
+		            </div>
+					
+					{{#each errors}}
+				    	<div class="alert alert-danger">
+				    		{{ message }}
+				    	</div>
+				    {{/each}}
+				</div>
+				<div class="modal-footer">
+					{{#if reports}}
+						Total 
+						<span class="label label-info">{{ reports.length }}</span> reports.
+					{{/if}}
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+	{{/if}}
+</template>
+
+<template name="gender_chart">
+	<div id="gender_chart"></div>
+</template>
