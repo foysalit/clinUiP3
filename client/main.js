@@ -87,10 +87,13 @@ Template.patients_list.events({
 		var patientId = $(e.target).closest('.add-patient-report').data('id'),
 			patient = Patients.getOne(patientId);
 
-		Session.set('add_report_form_patient', patient);
-		Meteor.setTimeout(function () {
-			Reports.createFieldTypeahead();
-		}, 500);
+		Reports.showTable(patient);
+	},
+	'click .list-group-item': function (e) {
+		var patientId = $(e.currentTarget).data('id'),
+			patient = Patients.getOne(patientId);
+			
+		Reports.showTable(patient);
 	},
 	'click .remove-patient': function (e) {
 		e.preventDefault();
@@ -329,6 +332,14 @@ var Reports = {
 				source: Utilities.strMatcher(source)
 			});
 		}
+	},
+
+	showTable: function (patient) {
+		var self = this;
+		Session.set('add_report_form_patient', patient);
+		Meteor.setTimeout(function () {
+			self.createFieldTypeahead();
+		}, 500);
 	},
 
 	validate: function (report, patient) {
